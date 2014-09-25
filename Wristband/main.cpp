@@ -8,8 +8,10 @@
 #include "opencv2\imgproc\imgproc.hpp"
 #include "SerialClass.h"
 #include "SerialUtil.h"
+#include "libopentld\tld\MedianFlowTracker.h"
 
 using namespace cv;
+using namespace tld;
 
 void sendToTeensy(SerialUtil*, int, int);
 
@@ -29,6 +31,12 @@ int main( int argc, char** argv )
 	Point2f textOffsetFromCenter(10.0,10.0);
 	const int maxArea = 100000;
 	Scalar green(0,255,0);
+	double area = 0;
+	// How we determine if the object's been detected.
+	double areaThreshold = 9000;
+	MedianFlowTracker* tracker = new MedianFlowTracker();
+	Rect* bb;
+	Mat  prevMat, curMat;
 
 	// Debug
 	SerialUtil* util = new SerialUtil();
@@ -41,8 +49,8 @@ int main( int argc, char** argv )
 	detector.detect(objImage,objectKeyPoints);
 	extractor.compute(objImage,objectKeyPoints,objectDescriptors);
 
-	while(running){
-
+	while(area < areaThreshold){
+		
 		cap >> sceneImage;
 
 		// Detect keypoints
@@ -124,6 +132,10 @@ int main( int argc, char** argv )
 		orientedSegment[1] = (sceneCorners[2]+sceneCorners[3])*(.5);
 		Point2f orientedVector = orientedSegment[1] - orientedSegment[0];
 
+		// 
+		bb = new Rect((int)sceneCorners[0].x,(int)sceneCorners[0].y,(int)(sceneCorners[1].x-sceneCorners[0].x),(int)(sceneCorners[3].y-sceneCorners[0].y));
+		prevMat = image;
+
 		// Calculate the rotation of the camera based on the difference between the angles of our two vectors.
 		double originalTheta = fastAtan2(originalVector.y,originalVector.x);
 		double orientedTheta = fastAtan2(orientedVector.y,orientedVector.x);
@@ -158,7 +170,7 @@ int main( int argc, char** argv )
 		line(image,average,average+orientedVector,green);
 
 		// Find the area.
-		double area = contourArea(sceneCorners);
+		area = contourArea(sceneCorners);
 		std::string message = "Area: ";
 		message += std::to_string(area);
 		putText(image, message, average + textOffsetFromCenter, FONT_HERSHEY_SIMPLEX, .5, Scalar(0,255,0));
@@ -185,9 +197,23 @@ int main( int argc, char** argv )
 		sendToTeensy(util, trueDirectionPercent, intensityPercent);
 
 		imshow("Webcam", image);
+		
+	}
+
+	while(running) { 
+		
+		cap >> curMat;
+
+		tracker->track(prevMat,curMat,bb);
+
 		if(waitKey(30)>0) running = false;
 	}
+
+
 }
+
+
+
 
 void sendToTeensy(SerialUtil* util, int thetaPercent, int intensityPercent){
 	unsigned char* string = new unsigned char[5];

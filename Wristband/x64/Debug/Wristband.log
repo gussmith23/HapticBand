@@ -1,18 +1,14 @@
-﻿Build started 9/25/2014 9:14:01 AM.
+﻿Build started 9/25/2014 10:29:25 AM.
      1>Project "R:\hfs5022\C++\Wristband\Wristband\Wristband.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /IR:\hfs5022\C++\Wristband\Wristband /IR:\hfs5022\OpenTLD\src /IC:\opencv249\build\include /Zi /nologo /W3 /WX /Od /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt main.cpp SerialClass.cpp SerialUtil.cpp
-         main.cpp
-         SerialClass.cpp
-         SerialUtil.cpp
-         Generating Code...
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"R:\hfs5022\C++\Wristband\x64\Debug\Wristband.exe" /INCREMENTAL /NOLOGO /LIBPATH:R:\hfs5022\OpenTLD\src\libopentld /LIBPATH:C:\opencv249\build\x64\vc11\lib opencv_core249d.lib opencv_imgproc249d.lib opencv_highgui249d.lib opencv_ml249d.lib opencv_video249d.lib opencv_features2d249d.lib opencv_calib3d249d.lib opencv_objdetect249d.lib opencv_contrib249d.lib opencv_legacy249d.lib opencv_flann249d.lib opencv_nonfree249d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"R:\hfs5022\C++\Wristband\x64\Debug\Wristband.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"R:\hfs5022\C++\Wristband\x64\Debug\Wristband.lib" /MACHINE:X64 x64\Debug\main.obj
+     1>Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"R:\hfs5022\C++\Wristband\x64\Debug\Wristband.exe" /INCREMENTAL /NOLOGO /LIBPATH:R:\hfs5022\OpenTLD\src\libopentld /LIBPATH:R:\hfs5022\OpenTLD\src\libopentld\mftracker /LIBPATH:R:\hfs5022\OpenTLD\src\libopentld\imacq /LIBPATH:R:\hfs5022\OpenTLD\src\libopentld\tld /LIBPATH:C:\opencv249\build\x64\vc11\lib opencv_core249d.lib opencv_imgproc249d.lib opencv_highgui249d.lib opencv_ml249d.lib opencv_video249d.lib opencv_features2d249d.lib opencv_calib3d249d.lib opencv_objdetect249d.lib opencv_contrib249d.lib opencv_legacy249d.lib opencv_flann249d.lib opencv_nonfree249d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"R:\hfs5022\C++\Wristband\x64\Debug\Wristband.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"R:\hfs5022\C++\Wristband\x64\Debug\Wristband.lib" /MACHINE:X64 x64\Debug\main.obj
          x64\Debug\SerialClass.obj
          x64\Debug\SerialUtil.obj
-         Wristband.vcxproj -> R:\hfs5022\C++\Wristband\x64\Debug\Wristband.exe
-     1>Done Building Project "R:\hfs5022\C++\Wristband\Wristband\Wristband.vcxproj" (Build target(s)).
+     1>main.obj : error LNK2019: unresolved external symbol "public: __cdecl tld::MedianFlowTracker::MedianFlowTracker(void)" (??0MedianFlowTracker@tld@@QEAA@XZ) referenced in function main
+     1>main.obj : error LNK2019: unresolved external symbol "public: void __cdecl tld::MedianFlowTracker::track(class cv::Mat const &,class cv::Mat const &,class cv::Rect_<int> *)" (?track@MedianFlowTracker@tld@@QEAAXAEBVMat@cv@@0PEAV?$Rect_@H@4@@Z) referenced in function main
+     1>R:\hfs5022\C++\Wristband\x64\Debug\Wristband.exe : fatal error LNK1120: 2 unresolved externals
+     1>Done Building Project "R:\hfs5022\C++\Wristband\Wristband\Wristband.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:12.19
+Time Elapsed 00:00:02.14
