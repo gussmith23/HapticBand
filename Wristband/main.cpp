@@ -14,6 +14,7 @@ using namespace cv;
 using namespace tld;
 
 void sendToTeensy(SerialUtil*, int, int);
+Rect* findBB(std::vector<Point2f>);
 
 int main( int argc, char** argv )
 {
@@ -32,6 +33,11 @@ int main( int argc, char** argv )
 	const int maxArea = 100000;
 	Scalar green(0,255,0);
 	MedianFlowTracker *mft = new MedianFlowTracker();
+	double area = 0;
+	const double areaThreshold = 10000;
+	Mat *prevImg;
+	Mat *curImg = NULL;
+	Rect *prevBB;
 
 	// Debug
 	SerialUtil* util = new SerialUtil();
@@ -44,10 +50,13 @@ int main( int argc, char** argv )
 	detector.detect(objImage,objectKeyPoints);
 	extractor.compute(objImage,objectKeyPoints,objectDescriptors);
 
-	while(running){
+	while(area<areaThreshold){
 
 		cap >> sceneImage;
 		
+		// This image will be pure and unedited.
+		prevImg = new Mat(sceneImage);
+
 		// Detect keypoints
 		detector.detect(sceneImage,sceneKeyPoints);
 
@@ -118,9 +127,11 @@ int main( int argc, char** argv )
 		// Then, convert it to a single vector from the origin.
 		Point2f originalVector = originalSegment[1] - originalSegment[0];
 		
-
 		// Transform
 		perspectiveTransform(objCorners,sceneCorners,homography);
+
+		// Find the rough bounding box of our object.
+		prevBB = findBB(sceneCorners);
 
 		// Now we set the oriented segment endpoints. By comparing these two segments, we can roughly estimate the rotation of the camera.
 		orientedSegment[0] = (sceneCorners[0]+sceneCorners[1])*(.5);
@@ -161,7 +172,7 @@ int main( int argc, char** argv )
 		line(image,average,average+orientedVector,green);
 
 		// Find the area.
-		double area = contourArea(sceneCorners);
+		area = contourArea(sceneCorners);
 		std::string message = "Area: ";
 		message += std::to_string(area);
 		putText(image, message, average + textOffsetFromCenter, FONT_HERSHEY_SIMPLEX, .5, Scalar(0,255,0));
@@ -190,6 +201,12 @@ int main( int argc, char** argv )
 		imshow("Webcam", image);
 		if(waitKey(30)>0) running = false;
 	}
+
+	Mat temp;
+	cap >> temp;
+	curImg = new Mat(temp);
+	mft->track(*prevImg,*curImg,prevBB);
+		
 }
 
 void sendToTeensy(SerialUtil* util, int thetaPercent, int intensityPercent){
@@ -201,4 +218,21 @@ void sendToTeensy(SerialUtil* util, int thetaPercent, int intensityPercent){
 	string[4] = ((int) string[0] + (int) string[1] + (int) string[2] + (int) string[3]);
 	if (string[4] == 255) string[4] = 254;
 	util->write((char*)string);
+}
+
+Rect* findBB(std::vector<Point2f> vec){
+	double leftmost = 0;
+	double rightmost = 0;
+	double topmost = 0;
+	double bottommost = 0;
+
+	for(int i = 0; i < vec.size(); i++){
+		Point2f pt = vec.at(i);
+		if(pt.x > rightmost) rightmost = pt.x;
+		if (pt.x < leftmost) leftmost = pt.x;
+		if (pt.y > bottommost) bottommost = pt.y;
+		if (pt.y < topmost) topmost = pt.y;
+	}
+
+	return new Rect(leftmost, topmost, rightmost-leftmost, bottommost-topmost);
 }
