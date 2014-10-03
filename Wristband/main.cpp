@@ -8,8 +8,10 @@
 #include "opencv2\imgproc\imgproc.hpp"
 #include "SerialClass.h"
 #include "SerialUtil.h"
+#include "MedianFlowTracker.h"
 
 using namespace cv;
+using namespace tld;
 
 void sendToTeensy(SerialUtil*, int, int);
 
@@ -29,6 +31,7 @@ int main( int argc, char** argv )
 	Point2f textOffsetFromCenter(10.0,10.0);
 	const int maxArea = 100000;
 	Scalar green(0,255,0);
+	MedianFlowTracker *mft = new MedianFlowTracker();
 
 	// Debug
 	SerialUtil* util = new SerialUtil();
@@ -44,7 +47,7 @@ int main( int argc, char** argv )
 	while(running){
 
 		cap >> sceneImage;
-
+		
 		// Detect keypoints
 		detector.detect(sceneImage,sceneKeyPoints);
 
